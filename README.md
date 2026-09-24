@@ -3,7 +3,7 @@
 A full-stack machine learning application that predicts a patient's risk of diabetes based on key health measurements. The project covers the complete ML lifecycle: data cleaning, model training and comparison, and deployment through a REST API with a custom web frontend.
 
 ## 🔗 Live Demo
-[Add your deployed link here once hosted]
+[https://ml-project-1-fpu8.onrender.com](https://ml-project-1-fpu8.onrender.com)
 
 ##  Problem Statement
 
