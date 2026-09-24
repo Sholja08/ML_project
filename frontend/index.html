@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Diabetes Risk Predictor</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+  }
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  }
+  h1 { font-size: 24px; margin-bottom: 4px; color: #333; }
+  p.subtitle { color: #777; margin-top: 0; margin-bottom: 24px; font-size: 14px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  label { font-size: 13px; color: #555; font-weight: 600; display: block; margin-bottom: 4px; }
+  input {
+    width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px;
+    font-size: 14px; margin-bottom: 14px;
+  }
+  input:focus { outline: none; border-color: #764ba2; }
+  button {
+    width: 100%; padding: 14px; background: #764ba2; color: white; border: none;
+    border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;
+    margin-top: 8px; transition: background 0.2s;
+  }
+  button:hover { background: #5f3d85; }
+  #result { margin-top: 20px; padding: 16px; border-radius: 10px; display: none; }
+  #result.high { background: #fdecea; border: 1px solid #f5c2c0; }
+  #result.low { background: #e9f9ee; border: 1px solid #b9e6c5; }
+  #result h2 { margin: 0 0 8px 0; font-size: 20px; }
+  .bar-bg { background: #eee; border-radius: 6px; height: 10px; overflow: hidden; margin-top: 8px; }
+  .bar-fill { height: 100%; background: #764ba2; transition: width 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <h1>🩺 Diabetes Risk Predictor</h1>
+  <p class="subtitle">Enter patient details to estimate diabetes risk</p>
+
+  <div class="grid">
+    <div><label>Pregnancies</label><input type="number" id="Pregnancies" value="1"></div>
+    <div><label>Glucose</label><input type="number" id="Glucose" value="120"></div>
+    <div><label>Blood Pressure</label><input type="number" id="BloodPressure" value="70"></div>
+    <div><label>Skin Thickness</label><input type="number" id="SkinThickness" value="20"></div>
+    <div><label>Insulin</label><input type="number" id="Insulin" value="80"></div>
+    <div><label>BMI</label><input type="number" step="0.1" id="BMI" value="25"></div>
+    <div><label>Pedigree Function</label><input type="number" step="0.01" id="DiabetesPedigreeFunction" value="0.5"></div>
+    <div><label>Age</label><input type="number" id="Age" value="30"></div>
+  </div>
+
+  <button onclick="predict()">Predict Risk</button>
+
+  <div id="result">
+    <h2 id="riskText"></h2>
+    <div class="bar-bg"><div class="bar-fill" id="barFill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<script>
+async function predict() {
+  const payload = {
+    Pregnancies: +document.getElementById("Pregnancies").value,
+    Glucose: +document.getElementById("Glucose").value,
+    BloodPressure: +document.getElementById("BloodPressure").value,
+    SkinThickness: +document.getElementById("SkinThickness").value,
+    Insulin: +document.getElementById("Insulin").value,
+    BMI: +document.getElementById("BMI").value,
+    DiabetesPedigreeFunction: +document.getElementById("DiabetesPedigreeFunction").value,
+    Age: +document.getElementById("Age").value,
+  };
+
+  const res = await fetch("http://localhost:8000/predict", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+  const data = await res.json();
+
+  const prob = data.diabetes_probability;
+  const resultBox = document.getElementById("result");
+  const riskText = document.getElementById("riskText");
+  const barFill = document.getElementById("barFill");
+
+  resultBox.style.display = "block";
+  resultBox.className = prob >= 0.5 ? "high" : "low";
+  riskText.textContent = `Risk: ${(prob * 100).toFixed(1)}% ${prob >= 0.5 ? "⚠️ High" : "✅ Low"}`;
+  barFill.style.width = `${prob * 100}%`;
+}
+</script>
+
+</body>
+</html>
