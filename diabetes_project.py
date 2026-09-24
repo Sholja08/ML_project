@@ -48,49 +48,23 @@ X_test_scaled = scaler.transform(X_test)
 
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report, roc_auc_score
 
-# ---------- Logistic Regression ----------
+# ---------- Logistic Regression (final chosen model) ----------
 from sklearn.linear_model import LogisticRegression
 log_model = LogisticRegression(class_weight="balanced", max_iter=1000)
 log_model.fit(X_train_scaled, y_train)
 log_pred = log_model.predict(X_test_scaled)
 log_probs = log_model.predict_proba(X_test_scaled)[:, 1]
 
-print("\n=== Logistic Regression ===")
+print("\n=== Logistic Regression (Final Model) ===")
 print("Accuracy:", accuracy_score(y_test, log_pred))
 print(confusion_matrix(y_test, log_pred))
 print(classification_report(y_test, log_pred))
 print("ROC-AUC:", roc_auc_score(y_test, log_probs))
 
-# ---------- Random Forest ----------
-from sklearn.ensemble import RandomForestClassifier
-rf_model = RandomForestClassifier(n_estimators=200, class_weight="balanced", random_state=42)
-rf_model.fit(X_train, y_train)   # trees don't need scaling
-rf_pred = rf_model.predict(X_test)
-rf_probs = rf_model.predict_proba(X_test)[:, 1]
+# Note: Random Forest and XGBoost were also tested during model selection.
+# Logistic Regression was chosen for better interpretability and simpler
+# deployment, with comparable performance on this dataset size (768 rows).
 
-print("\n=== Random Forest ===")
-print("Accuracy:", accuracy_score(y_test, rf_pred))
-print(confusion_matrix(y_test, rf_pred))
-print(classification_report(y_test, rf_pred))
-print("ROC-AUC:", roc_auc_score(y_test, rf_probs))
-
-# ---------- XGBoost ----------
-from xgboost import XGBClassifier
-xgb_model = XGBClassifier(
-    n_estimators=200, learning_rate=0.05, eval_metric="logloss",
-    scale_pos_weight=1.87, random_state=42   # 500/268 ≈ 1.87, balances classes
-)
-xgb_model.fit(X_train, y_train)
-xgb_pred = xgb_model.predict(X_test)
-xgb_probs = xgb_model.predict_proba(X_test)[:, 1]
-
-print("\n=== XGBoost ===")
-print("Accuracy:", accuracy_score(y_test, xgb_pred))
-print(confusion_matrix(y_test, xgb_pred))
-print(classification_report(y_test, xgb_pred))
-print("ROC-AUC:", roc_auc_score(y_test, xgb_probs))
-
-# ---------- Save the best model (pick whichever has best recall/ROC-AUC) ----------
 joblib.dump(
     {"model": log_model, "scaler": scaler, "columns": list(X.columns)},
     "diabetes_model.pkl"
