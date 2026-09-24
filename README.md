@@ -5,7 +5,7 @@ A full-stack machine learning application that predicts a patient's risk of diab
 ## 🔗 Live Demo
 [Add your deployed link here once hosted]
 
-## 📌 Problem Statement
+##  Problem Statement
 
 Early identification of diabetes risk allows for earlier intervention and better health outcomes. This project uses the Pima Indians Diabetes Dataset to train a model that estimates diabetes risk from 8 routine clinical measurements, and exposes it through a simple web interface for real-time predictions.
 
@@ -86,14 +86,8 @@ ML_project/
 5. **Open the app**
    Visit `http://localhost:8000` in your browser.
 
-## 🔍 What I'd Improve With More Time
 
-- Add SHAP-based feature importance to explain individual predictions
-- Add input validation and error handling on the frontend
-- Deploy with CI/CD and add automated tests for the API
-- Try hyperparameter tuning (GridSearchCV) to further improve recall
-- Add authentication if this were to handle real patient data
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 This project is for educational purposes only and is not intended for actual medical diagnosis. Consult a healthcare professional for medical advice.
